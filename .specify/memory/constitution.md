@@ -1,50 +1,77 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: N/A (template) → 1.0.0
+- Modified principles:
+  - Placeholder principle 1 → I. High-Quality, Maintainable Architecture
+  - Placeholder principle 2 → II. Explicit Separation of Concerns
+  - Placeholder principle 3 → III. Testable & Verifiable Critical Logic
+  - Placeholder principle 4 → IV. Consistent API & AI Outputs
+  - Placeholder principle 5 → V. Reliable & Controlled External Integration
+- Added sections: Performance & Reliability Standards; Development Workflow & Scope Control
+- Removed sections: None
+- Templates requiring updates:
+  - ✅ .specify/templates/plan-template.md
+  - ✅ .specify/templates/spec-template.md
+  - ✅ .specify/templates/tasks-template.md
+- Follow-up TODOs: TODO(RATIFICATION_DATE): original adoption date unknown
+-->
+# Jira MCP Server Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. High-Quality, Maintainable Architecture
+- The architecture MUST be simple, clear, and maintainable over time.
+- Components MUST have clear interfaces and minimal coupling.
+- Code MUST be readable and structured for long-term ownership.
+Rationale: maintainable systems reduce defects and speed up future changes.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Explicit Separation of Concerns
+- Domain logic, infrastructure, and integration code MUST be separated.
+- Business rules MUST NOT depend on transport or storage details.
+- Shared utilities MUST be generic and avoid feature-specific coupling.
+Rationale: clear boundaries prevent regressions and enable focused changes.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Testable & Verifiable Critical Logic
+- Formal testing standards are NOT required in early phases.
+- All critical logic MUST be written so it is testable and verifiable.
+- Critical logic MUST use deterministic inputs/outputs and injectable deps.
+- Structured logging MUST exist for critical paths to support verification.
+Rationale: verifiable behavior reduces risk even before full test suites exist.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Consistent API & AI Outputs
+- API and AI-facing outputs MUST be predictable and documented.
+- Response shapes MUST be consistent for the same inputs.
+- Errors MUST be clear, stable, and include actionable messages.
+Rationale: consistent outputs enable reliable integration and automation.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Reliable & Controlled External Integration
+- External API usage MUST be controlled with limits and timeouts.
+- All external calls MUST handle failure and degrade gracefully.
+- Audit logging MUST be non-blocking and MUST NOT delay requests.
+Rationale: reliability comes from controlled dependencies and safe fallbacks.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Performance & Reliability Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Define timeouts and retry policies for all external calls.
+- Use bounded concurrency and rate limits for third-party services.
+- Prefer async or buffered audit logging to avoid blocking request paths.
+- Ensure critical paths remain reliable under partial dependency failure.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow & Scope Control
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- No implementation may begin without an approved specification.
+- Scope changes MUST update the specification before implementation.
+- The system is backend-only unless explicitly re-scoped in a spec.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- This constitution is binding and supersedes local practices.
+- All technical decisions and implementations MUST follow these principles.
+- No implementation may occur without an approved specification.
+- Scope changes require specification updates before any code changes.
+- The system remains backend-only unless explicitly re-scoped.
+- Amendments require documenting changes, updating the Sync Impact Report,
+  and recording a new version and amendment date.
+- Reviews MUST verify compliance with this constitution.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE): original adoption date unknown | **Last Amended**: 2026-02-09

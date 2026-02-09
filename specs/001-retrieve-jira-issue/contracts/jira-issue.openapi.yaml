@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: Jira Issue Retrieval MCP
+  version: 1.0.0
+  description: Read-only Jira issue retrieval for AI clients.
+servers:
+  - url: https://service.example.com
+paths:
+  /mcp/jira/issue:
+    post:
+      summary: Retrieve a Jira issue by key
+      description: Returns a normalized, deterministic issue payload.
+      security:
+        - oauthClientCredentials: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JiraIssueRequest"
+      responses:
+        "200":
+          description: Normalized issue response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NormalizedIssueResponse"
+        "400":
+          description: Invalid key or validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Access denied to the issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Issue not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "504":
+          description: Jira timeout or temporary unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  securitySchemes:
+    oauthClientCredentials:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes: {}
+  schemas:
+    JiraIssueRequest:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string
+          description: Jira issue key (e.g., ABC-123).
+    NormalizedIssueResponse:
+      type: object
+      required:
+        - key
+        - summary
+        - status
+        - updatedAt
+        - attachments
+      properties:
+        key:
+          type: string
+        summary:
+          type: string
+        status:
+          type: string
+        issueType:
+          type: string
+        priority:
+          type: string
+        assignee:
+          type: string
+        reporter:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttachmentMetadata"
+        metadata:
+          $ref: "#/components/schemas/ResponseMetadata"
+    AttachmentMetadata:
+      type: object
+      required:
+        - name
+        - size
+        - mimeType
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+        mimeType:
+          type: string
+        url:
+          type: string
+    ResponseMetadata:
+      type: object
+      required:
+        - deterministic
+      properties:
+        deterministic:
+          type: boolean
+        sourceUpdatedAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string

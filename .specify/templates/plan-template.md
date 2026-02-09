@@ -31,7 +31,11 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Architecture is clear and maintainable with explicit separation of concerns.
+- Critical logic is testable/verifiable and has structured logging.
+- API/AI output contracts are consistent with clear error messages.
+- External API usage is controlled with timeouts and safe degradation.
+- Scope remains backend-only unless the spec explicitly re-scopes it.
 
 ## Project Structure
 
