@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateJiraInteractionLogs001 implements MigrationInterface {
-  name = 'CreateJiraInteractionLogs001';
+export class CreateJiraInteractionLogs1739345470000 implements MigrationInterface {
+  name = 'CreateJiraInteractionLogs1739345470000';
 
   async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
