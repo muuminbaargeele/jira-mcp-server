@@ -1,4 +1,7 @@
 import crypto from 'crypto';
+import { parseAdf } from './adf-parser';
+import { redactSecrets } from './secret-redactor';
+import { getLogger } from '../../common/logger';
 
 export interface NormalizedAttachment {
   name: string;
@@ -15,7 +18,8 @@ export interface NormalizedIssue {
   priority?: string;
   assignee?: string;
   reporter?: string;
-  description?: string;
+  descriptionText: string;
+  descriptionRaw: object | null;
   createdAt?: string;
   updatedAt?: string;
   attachments: NormalizedAttachment[];
@@ -23,6 +27,54 @@ export interface NormalizedIssue {
     deterministic: boolean;
     sourceUpdatedAt?: string;
   };
+}
+
+/**
+ * Safely parse an ADF document and redact secrets. On error, returns ""
+ * and logs the failure without crashing the issue retrieval (NFR-002).
+ *
+ * Pipeline: ADF → plain text → redact secrets → final text.
+ * If secrets are found, a structured audit event is emitted (FR-011).
+ */
+function safeNormalizeDescription(description: any, issueKey: string): string {
+  const logger = getLogger();
+  try {
+    logger.debug({ issueKey }, 'description_normalize_start');
+
+    // Step 1: Parse ADF to plain text.
+    const plainText = parseAdf(description);
+    if (!plainText) {
+      logger.debug({ issueKey }, 'description_normalize_empty');
+      return '';
+    }
+
+    // Step 2: Redact secrets from the plain text.
+    const result = redactSecrets(plainText);
+
+    // Step 3: Log redaction audit event if any secrets were found (FR-011).
+    if (result.totalRedacted > 0) {
+      logger.warn(
+        {
+          issueKey,
+          redactions: result.redactions,
+          totalRedacted: result.totalRedacted,
+        },
+        'secrets_redacted',
+      );
+    }
+
+    logger.debug(
+      { issueKey, textLength: result.text.length },
+      'description_normalize_complete',
+    );
+    return result.text;
+  } catch (err: any) {
+    logger.error(
+      { issueKey, error: err?.message ?? String(err) },
+      'adf_parse_failed',
+    );
+    return '';
+  }
 }
 
 export function normalizeIssue(issue: any): NormalizedIssue {
@@ -42,7 +94,8 @@ export function normalizeIssue(issue: any): NormalizedIssue {
     priority: fields.priority?.name,
     assignee: fields.assignee?.displayName,
     reporter: fields.reporter?.displayName,
-    description: fields.description?.content ? JSON.stringify(fields.description) : undefined,
+    descriptionText: safeNormalizeDescription(fields.description, issue.key),
+    descriptionRaw: fields.description ?? null,
     createdAt: fields.created,
     updatedAt: fields.updated,
     attachments,
