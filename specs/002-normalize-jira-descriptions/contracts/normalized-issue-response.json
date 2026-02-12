@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NormalizedIssueResponse",
+  "description": "Response schema for POST /mcp/jira/issue after the normalize-jira-descriptions feature. Replaces the old 'description' field with 'descriptionText' and 'descriptionRaw'.",
+  "type": "object",
+  "required": [
+    "key",
+    "summary",
+    "status",
+    "descriptionText",
+    "attachments",
+    "metadata"
+  ],
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Jira issue key (e.g., PROJ-123)",
+      "pattern": "^[A-Z][A-Z0-9]+-\\d+$"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Issue summary/title"
+    },
+    "status": {
+      "type": "string",
+      "description": "Current issue status name"
+    },
+    "issueType": {
+      "type": "string",
+      "description": "Issue type name (e.g., Bug, Story, Task)"
+    },
+    "priority": {
+      "type": "string",
+      "description": "Priority level name"
+    },
+    "assignee": {
+      "type": "string",
+      "description": "Assignee display name"
+    },
+    "reporter": {
+      "type": "string",
+      "description": "Reporter display name"
+    },
+    "descriptionText": {
+      "type": "string",
+      "description": "Normalized plain text extracted from the Jira issue description. Formatting marks are stripped and secrets are redacted with typed placeholders like [REDACTED:type]. Always a string; empty string when no description exists.",
+      "examples": [
+        "This is a bug report.\n\nSteps to reproduce:\n- Open the settings page\n- Click save\n\nExpected: Settings saved\nActual: Error 500",
+        "",
+        "Config: password=[REDACTED:password]\nAPI key: [REDACTED:aws-key]"
+      ]
+    },
+    "descriptionRaw": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Original Atlassian Document Format (ADF) JSON structure as received from the Jira API. Provided for backward compatibility.",
+          "properties": {
+            "version": { "type": "integer", "const": 1 },
+            "type": { "type": "string", "const": "doc" },
+            "content": { "type": "array" }
+          },
+          "required": ["version", "type", "content"]
+        },
+        {
+          "type": "null",
+          "description": "Null when the Jira issue has no description"
+        }
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Issue creation timestamp"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Issue last update timestamp"
+    },
+    "attachments": {
+      "type": "array",
+      "description": "List of issue attachments",
+      "items": {
+        "type": "object",
+        "required": ["name", "size", "mimeType"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Attachment filename"
+          },
+          "size": {
+            "type": "integer",
+            "description": "File size in bytes"
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the attachment"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Download URL for the attachment"
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["deterministic"],
+      "properties": {
+        "deterministic": {
+          "type": "boolean",
+          "description": "Whether the response is deterministic (always true for normalized issues)"
+        },
+        "sourceUpdatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the source issue was last updated in Jira"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

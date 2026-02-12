@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-02-09
 
 ## Active Technologies
+- TypeScript 5.4 / Node.js (ES2022 target, CommonJS modules) + NestJS 10, Axios, Bottleneck, class-validator, class-transformer, Pino, TypeORM (002-normalize-jira-descriptions)
+- MySQL via TypeORM (audit logs only; normalization is stateless) (002-normalize-jira-descriptions)
 
 - TypeScript (Node.js 20 LTS) + NestJS, Jira REST API client, structured logging lib (001-retrieve-jira-issue)
 
@@ -22,6 +24,7 @@ npm test && npm run lint
 TypeScript (Node.js 20 LTS): Follow standard conventions
 
 ## Recent Changes
+- 002-normalize-jira-descriptions: Added TypeScript 5.4 / Node.js (ES2022 target, CommonJS modules) + NestJS 10, Axios, Bottleneck, class-validator, class-transformer, Pino, TypeORM
 
 - 001-retrieve-jira-issue: Added TypeScript (Node.js 20 LTS) + NestJS, Jira REST API client, structured logging lib
 

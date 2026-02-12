@@ -19,7 +19,8 @@ export class NormalizedIssueResponseDto {
   priority?: string;
   assignee?: string;
   reporter?: string;
-  description?: string;
+  descriptionText!: string;
+  descriptionRaw?: object | null;
   createdAt?: string;
   updatedAt?: string;
   attachments!: { name: string; size: number; mimeType: string; url?: string }[];
